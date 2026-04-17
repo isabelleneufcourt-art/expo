@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diane Neufcourt — Massage Métamorphique · Saint-Nicolas</title>
+    <meta name="description" content="Diane Neufcourt, thérapeute en massage métamorphique à Saint-Nicolas (Belgique). Un toucher doux et léger qui libère vos tensions et crée les conditions pour l'ouverture au changement.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #3a3a3a;
+            background-color: #F5F1ED;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: Georgia, serif;
+            color: #C85A54;
+            line-height: 1.3;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* HEADER */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: #E8D5D0;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo {
+            font-family: Georgia, serif;
+            color: #C85A54;
+            font-size: 1.5rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+
+        .main-nav a {
+            color: #3a3a3a;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.25s ease;
+            position: relative;
+        }
+
+        .main-nav a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0;
+            height: 1.5px;
+            background-color: #C85A54;
+            transition: width 0.3s ease;
+        }
+
+        .main-nav a:hover {
+            color: #C85A54;
+        }
+
+        .main-nav a:hover::after {
+            width: 100%;
+        }
+
+        /* HERO */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 32px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+
+        .hero-title {
+            font-size: 2.8rem;
+            margin-bottom: 24px;
+        }
+
+        .hero-subtitle {
+            font-style: italic;
+            font-size: 1.15rem;
+            color: #555;
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #D4AF37;
+            color: #fff;
+            padding: 16px 36px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .hero-contact {
+            margin-top: 40px;
+            font-size: 0.95rem;
+            color: #666;
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .hero-contact span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hero-image {
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 8px 24px rgba(200, 90, 84, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-image svg {
+            width: 100%;
+            height: auto;
+            max-width: 440px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .header-inner {
+                padding: 16px 20px;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .main-nav {
+                gap: 16px;
+                justify-content: center;
+                font-size: 0.9rem;
+            }
+
+            .hero {
+                padding: 48px 20px;
+            }
+
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .hero-title {
+                font-size: 2.1rem;
+            }
+
+            .hero-subtitle {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-contact {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="#" class="logo">✨ Diane Neufcourt</a>
+            <nav class="main-nav">
+                <a href="#apropos">À propos</a>
+                <a href="#methode">La méthode</a>
+                <a href="#services">Services</a>
+                <a href="#temoignages">Témoignages</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-grid">
+            <div class="hero-text">
+                <h1 class="hero-title">Massage Métamorphique</h1>
+                <p class="hero-subtitle">Un toucher doux et léger qui libère vos tensions et crée les conditions pour l'ouverture au changement.</p>
+                <a href="#contact" class="cta-button">Prendre rendez-vous</a>
+                <div class="hero-contact">
+                    <span>📱 0477 69 00 84</span>
+                    <span>📍 Saint-Nicolas</span>
+                </div>
+            </div>
+            <div class="hero-image">
+                <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <defs>
+                        <radialGradient id="palmGlow" cx="50%" cy="60%" r="50%">
+                            <stop offset="0%" stop-color="#FBE7E3" stop-opacity="0.8"/>
+                            <stop offset="100%" stop-color="#FBE7E3" stop-opacity="0"/>
+                        </radialGradient>
+                        <linearGradient id="wingLight" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#F2B8C6"/>
+                            <stop offset="100%" stop-color="#C85A54"/>
+                        </linearGradient>
+                        <linearGradient id="wingDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#E88FA3"/>
+                            <stop offset="100%" stop-color="#A63F6E"/>
+                        </linearGradient>
+                    </defs>
+
+                    <circle cx="200" cy="240" r="160" fill="url(#palmGlow)"/>
+
+                    <!-- Left hand -->
+                    <g transform="translate(90, 200)" opacity="0.9">
+                        <path d="M 20 100 Q 10 60 20 20 Q 28 0 44 6 Q 52 10 52 28 L 52 70
+                                 M 52 70 Q 58 20 68 10 Q 82 4 88 18 Q 90 28 88 50 L 86 80
+                                 M 86 80 Q 94 40 104 36 Q 118 36 120 52 Q 120 66 116 90 L 114 110
+                                 M 114 110 Q 120 80 130 82 Q 140 88 138 104 L 134 130
+                                 Q 130 160 110 170 Q 60 180 30 160 Q 14 140 20 100 Z"
+                              fill="#F5D9CF" stroke="#C85A54" stroke-width="1.5" stroke-linejoin="round" opacity="0.85"/>
+                    </g>
+
+                    <!-- Right hand -->
+                    <g transform="translate(310, 200) scale(-1, 1)" opacity="0.9">
+                        <path d="M 20 100 Q 10 60 20 20 Q 28 0 44 6 Q 52 10 52 28 L 52 70
+                                 M 52 70 Q 58 20 68 10 Q 82 4 88 18 Q 90 28 88 50 L 86 80
+                                 M 86 80 Q 94 40 104 36 Q 118 36 120 52 Q 120 66 116 90 L 114 110
+                                 M 114 110 Q 120 80 130 82 Q 140 88 138 104 L 134 130
+                                 Q 130 160 110 170 Q 60 180 30 160 Q 14 140 20 100 Z"
+                              fill="#F5D9CF" stroke="#C85A54" stroke-width="1.5" stroke-linejoin="round" opacity="0.85"/>
+                    </g>
+
+                    <!-- Butterflies -->
+                    <g transform="translate(200, 150)">
+                        <ellipse cx="-12" cy="-6" rx="14" ry="18" fill="url(#wingLight)" opacity="0.85" transform="rotate(-25 -12 -6)"/>
+                        <ellipse cx="12" cy="-6" rx="14" ry="18" fill="url(#wingLight)" opacity="0.85" transform="rotate(25 12 -6)"/>
+                        <ellipse cx="-10" cy="8" rx="10" ry="13" fill="url(#wingDark)" opacity="0.75" transform="rotate(-35 -10 8)"/>
+                        <ellipse cx="10" cy="8" rx="10" ry="13" fill="url(#wingDark)" opacity="0.75" transform="rotate(35 10 8)"/>
+                        <line x1="0" y1="-10" x2="0" y2="12" stroke="#7A2A3D" stroke-width="1.2" stroke-linecap="round"/>
+                    </g>
+
+                    <g transform="translate(140, 90) rotate(-15)">
+                        <ellipse cx="-10" cy="-5" rx="11" ry="14" fill="url(#wingLight)" opacity="0.8" transform="rotate(-25 -10 -5)"/>
+                        <ellipse cx="10" cy="-5" rx="11" ry="14" fill="url(#wingLight)" opacity="0.8" transform="rotate(25 10 -5)"/>
+                        <ellipse cx="-8" cy="6" rx="8" ry="10" fill="url(#wingDark)" opacity="0.7" transform="rotate(-35 -8 6)"/>
+                        <ellipse cx="8" cy="6" rx="8" ry="10" fill="url(#wingDark)" opacity="0.7" transform="rotate(35 8 6)"/>
+                        <line x1="0" y1="-8" x2="0" y2="9" stroke="#7A2A3D" stroke-width="1" stroke-linecap="round"/>
+                    </g>
+
+                    <g transform="translate(270, 70) rotate(20)">
+                        <ellipse cx="-9" cy="-4" rx="10" ry="13" fill="url(#wingLight)" opacity="0.8" transform="rotate(-25 -9 -4)"/>
+                        <ellipse cx="9" cy="-4" rx="10" ry="13" fill="url(#wingLight)" opacity="0.8" transform="rotate(25 9 -4)"/>
+                        <ellipse cx="-7" cy="6" rx="7" ry="9" fill="url(#wingDark)" opacity="0.7" transform="rotate(-35 -7 6)"/>
+                        <ellipse cx="7" cy="6" rx="7" ry="9" fill="url(#wingDark)" opacity="0.7" transform="rotate(35 7 6)"/>
+                        <line x1="0" y1="-7" x2="0" y2="8" stroke="#7A2A3D" stroke-width="1" stroke-linecap="round"/>
+                    </g>
+
+                    <g transform="translate(320, 160) rotate(35)">
+                        <ellipse cx="-8" cy="-4" rx="9" ry="11" fill="url(#wingLight)" opacity="0.75" transform="rotate(-25 -8 -4)"/>
+                        <ellipse cx="8" cy="-4" rx="9" ry="11" fill="url(#wingLight)" opacity="0.75" transform="rotate(25 8 -4)"/>
+                        <ellipse cx="-6" cy="5" rx="6" ry="8" fill="url(#wingDark)" opacity="0.65" transform="rotate(-35 -6 5)"/>
+                        <ellipse cx="6" cy="5" rx="6" ry="8" fill="url(#wingDark)" opacity="0.65" transform="rotate(35 6 5)"/>
+                    </g>
+
+                    <g transform="translate(90, 120) rotate(-25)">
+                        <ellipse cx="-7" cy="-3" rx="8" ry="10" fill="url(#wingLight)" opacity="0.7" transform="rotate(-25 -7 -3)"/>
+                        <ellipse cx="7" cy="-3" rx="8" ry="10" fill="url(#wingLight)" opacity="0.7" transform="rotate(25 7 -3)"/>
+                        <ellipse cx="-5" cy="4" rx="5" ry="7" fill="url(#wingDark)" opacity="0.6" transform="rotate(-35 -5 4)"/>
+                        <ellipse cx="5" cy="4" rx="5" ry="7" fill="url(#wingDark)" opacity="0.6" transform="rotate(35 5 4)"/>
+                    </g>
+
+                    <!-- Soft sparkles -->
+                    <circle cx="180" cy="40" r="2" fill="#D4AF37" opacity="0.7"/>
+                    <circle cx="240" cy="50" r="1.5" fill="#D4AF37" opacity="0.6"/>
+                    <circle cx="100" cy="200" r="1.5" fill="#D4AF37" opacity="0.5"/>
+                    <circle cx="310" cy="270" r="2" fill="#D4AF37" opacity="0.6"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
