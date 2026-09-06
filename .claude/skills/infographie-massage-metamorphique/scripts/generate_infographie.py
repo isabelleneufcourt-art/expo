@@ -22,25 +22,33 @@ CANVAS_W, CANVAS_H = 1080, 1350
 
 BG_TOP = (251, 248, 244)
 BG_BOTTOM = (240, 232, 219)
-COLOR_TITLE = (75, 90, 46)          # vert olive foncé (titres serif)
-COLOR_TEXT = (43, 38, 32)           # texte courant, brun très foncé
-COLOR_ACCROCHE_BG = (238, 224, 208)
-COLOR_ACCROCHE_TEXT = (48, 38, 28)
+COLOR_TITLE = (40, 34, 27)           # brun très foncé, quasi noir (titres serif)
+COLOR_TEXT = (43, 38, 32)            # texte courant, brun très foncé
+COLOR_ACCROCHE_TEXT = (156, 80, 45)  # terracotta (accroche manuscrite)
+COLOR_SWASH = (40, 34, 27)           # soulignements à main levée sous titre/accroche
 COLOR_MEDAILLON_BG = (231, 217, 200)
 COLOR_ICON_STROKE = (61, 48, 36)
 COLOR_CTA_BG = (238, 227, 211)
 COLOR_CTA_BORDER = (210, 190, 162)
-COLOR_FOOTER_LINE = (196, 178, 152)
+COLOR_BADGE_BG = (54, 63, 38)        # badge lien : vert olive foncé
+COLOR_BADGE_TEXT = (250, 248, 244)
+COLOR_SEPARATOR = (214, 202, 184)    # ligne fine entre sections
 COLOR_HASHTAG = (110, 96, 78)
 
 MARGIN_L = 62
 CONTENT_R = 660          # bord droit de la colonne de texte
 PHOTO_X0 = 700           # début de la bande photo
 FEATHER_W = 170          # largeur de la zone de fondu photo -> fond
-FOOTER_H = 118           # bande basse (hashtags + séparateur), pleine largeur
+FOOTER_H = 90            # bande basse (hashtags), pleine largeur
 
-CTA_TEXT_X = MARGIN_L + 110
+CTA_TEXT_X = MARGIN_L + 90
 CTA_TW_MAX = CONTENT_R - 24 - CTA_TEXT_X
+CTA_PAD_TOP = 32
+CTA_LINE_H = 32
+CTA_PAD_BOTTOM = 32
+BADGE_H = 50
+BADGE_PAD_X = 24
+BADGE_GAP_BELOW = 16
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 FONT_DIR = os.path.join(os.path.dirname(SCRIPT_DIR), "assets", "fonts")
@@ -64,16 +72,16 @@ def load_fonts():
         return ImageFont.truetype(os.path.join(FONT_DIR, name), size)
 
     fonts = {
-        "titre": f("Lora-Bold.ttf", 54),
-        "sous_titre": f("Lora-Regular.ttf", 34),
+        "surtitre": f("InstrumentSans-Bold.ttf", 24),
         "accroche": f("Caveat-Variable.ttf", 46),
         "section_titre": f("InstrumentSans-Bold.ttf", 29),
         "corps": f("InstrumentSans-Regular.ttf", 27),
         "corps_gras": f("InstrumentSans-Bold.ttf", 27),
         "cta_texte": f("InstrumentSans-Regular.ttf", 26),
-        "cta_valeur": f("InstrumentSans-Bold.ttf", 32),
-        "cta_valeur_small": f("InstrumentSans-Bold.ttf", 24),
-        "hashtag": f("InstrumentSans-Regular.ttf", 20),
+        "cta_texte_gras": f("InstrumentSans-Bold.ttf", 26),
+        "lien_badge": f("InstrumentSans-Bold.ttf", 22),
+        "lien_badge_small": f("InstrumentSans-Bold.ttf", 17),
+        "hashtag": f("InstrumentSans-Regular.ttf", 21),
     }
     # Police manuscrite variable : on force un poids plus soutenu (~650)
     # pour rester lisible en petit corps sur fond clair.
@@ -205,6 +213,32 @@ def icon_question(draw, cx, cy, r, fonts):
                font=fonts["section_titre"], fill=COLOR_ICON_STROKE)
 
 
+def icon_horloge_noeud(draw, cx, cy, r):
+    # horloge à gauche (agenda chargé) + gribouillis noué à droite (sollicitations)
+    hx, hy, hr = cx - r * 0.35, cy, r * 0.42
+    draw.ellipse([hx - hr, hy - hr, hx + hr, hy + hr], outline=COLOR_ICON_STROKE, width=3)
+    draw.line([hx, hy, hx, hy - hr * 0.7], fill=COLOR_ICON_STROKE, width=2)
+    draw.line([hx, hy, hx + hr * 0.5, hy], fill=COLOR_ICON_STROKE, width=2)
+    sx = cx + r * 0.32
+    pts = [(sx - r * 0.28, cy - r * 0.35), (sx + r * 0.25, cy - r * 0.2),
+           (sx - r * 0.22, cy), (sx + r * 0.28, cy + r * 0.18),
+           (sx - r * 0.15, cy + r * 0.38)]
+    draw.line(pts, fill=COLOR_ICON_STROKE, width=2, joint="curve")
+
+
+def icon_colonne_ondes(draw, cx, cy, r):
+    draw.line([cx, cy - r * 0.6, cx, cy + r * 0.6], fill=COLOR_ICON_STROKE, width=2)
+    for i in range(-2, 3):
+        yy = cy + i * r * 0.26
+        draw.ellipse([cx - r * 0.26, yy - r * 0.1, cx + r * 0.26, yy + r * 0.1],
+                     outline=COLOR_ICON_STROKE, width=2)
+    for side in (-1, 1):
+        for dy in (-0.3, 0, 0.3):
+            x0 = cx + side * r * 0.42
+            x1 = cx + side * r * 0.68
+            draw.line([x0, cy + dy * r, x1, cy + dy * r], fill=COLOR_ICON_STROKE, width=2)
+
+
 def icon_lien(draw, cx, cy, r):
     draw.arc([cx - r * 0.55, cy - r * 0.3, cx + r * 0.15, cy + r * 0.3], 40, 320,
               fill=COLOR_ICON_STROKE, width=3)
@@ -240,6 +274,8 @@ ICONS = {
     "enveloppe": icon_enveloppe,
     "lien": icon_lien,
     "coeur": icon_coeur_petit,
+    "horloge_noeud": icon_horloge_noeud,
+    "colonne_ondes": icon_colonne_ondes,
 }
 
 
@@ -338,28 +374,99 @@ def draw_wrapped(draw, xy, text, font_regular, font_bold, max_width, fill, line_
 
 
 def layout_cta(draw, cta, fonts, warnings):
-    """Calcule les lignes de texte et de valeur (numéro/URL) de l'encart CTA,
-    en choisissant automatiquement une police plus petite pour une ligne de
-    valeur trop large (typiquement une URL) plutôt que de la faire déborder
-    du cadre. Retourne (lignes_texte, [(ligne_valeur, police), ...], hauteur)."""
-    texte_lines = wrap_plain(draw, cta.get("texte", ""), fonts["cta_texte"], CTA_TW_MAX)
-    valeur_lines = []
-    for raw_line in cta.get("valeur", "").split("\n"):
-        raw_line = raw_line.strip()
-        if not raw_line:
-            continue
-        font = fonts["cta_valeur"]
-        if draw.textlength(raw_line, font=font) > CTA_TW_MAX:
-            font = fonts["cta_valeur_small"]
-            if draw.textlength(raw_line, font=font) > CTA_TW_MAX:
-                warn(warnings, f"la valeur du CTA '{raw_line}' est trop longue pour l'encart "
-                     "même en petite police : elle risque de déborder. Raccourcis-la.")
-        valeur_lines.append((raw_line, font))
-    h = 34 + 32 * len(texte_lines)
-    if valeur_lines:
-        h += 10 + 34 * len(valeur_lines)
-    h += 26
-    return texte_lines, valeur_lines, max(h, 100)
+    """Calcule la hauteur de l'encart CTA (texte, éventuellement gras via
+    **...**) et, si un lien est fourni, la police/largeur du badge qui vient
+    chevaucher le bas du cadre — en choisissant automatiquement une police
+    plus petite si l'URL est trop longue plutôt que de la faire déborder.
+    Retourne (cta_h, badge_font_ou_None, badge_w, hauteur_totale_du_bloc)."""
+    n_lines = len(wrap_runs(draw, cta.get("texte", ""), fonts["cta_texte"],
+                            fonts["cta_texte_gras"], CTA_TW_MAX))
+    cta_h = CTA_PAD_TOP + CTA_LINE_H * max(n_lines, 1) + CTA_PAD_BOTTOM
+
+    badge_font, badge_w = None, 0
+    lien = cta.get("lien")
+    if lien:
+        max_badge_w = CONTENT_R - MARGIN_L
+        badge_font = fonts["lien_badge"]
+        tw = draw.textlength(lien, font=badge_font)
+        if tw + 2 * BADGE_PAD_X > max_badge_w:
+            badge_font = fonts["lien_badge_small"]
+            tw = draw.textlength(lien, font=badge_font)
+            if tw + 2 * BADGE_PAD_X > max_badge_w:
+                warn(warnings, f"le lien du CTA '{lien}' est trop long pour l'encart même en "
+                     "petite police : il risque de déborder. Raccourcis-le.")
+        badge_w = min(max_badge_w, tw + 2 * BADGE_PAD_X)
+
+    total_h = cta_h + (BADGE_H / 2 + BADGE_GAP_BELOW if lien else 0)
+    return cta_h, badge_font, badge_w, total_h
+
+
+def draw_tracked(draw, xy, text, font, fill, tracking):
+    """Dessine du texte avec un espacement supplémentaire entre lettres
+    (used pour le petit intitulé en capitales au-dessus du titre)."""
+    x, y = xy
+    for ch in text:
+        draw.text((x, y), ch, font=font, fill=fill)
+        x += draw.textlength(ch, font=font) + tracking
+    return x
+
+
+def draw_swash(draw, x0, y, width, color, thickness=3):
+    """Trait de soulignement 'à main levée' : une légère courbe suivie d'un
+    petit relevé de stylo en fin de trait."""
+    n = 20
+    pts = []
+    for i in range(n + 1):
+        t = i / n
+        pts.append((x0 + t * width, y + math.sin(t * math.pi) * 4))
+    draw.line(pts, fill=color, width=thickness, joint="curve")
+    ex, ey = pts[-1]
+    draw.line([ex, ey, ex + 12, ey - 9], fill=color, width=thickness)
+
+
+def layout_titre(draw, titre, warnings):
+    """Choisit la plus grande taille de Lora-Bold (entre 44 et 84px) qui fait
+    tenir le titre (converti en capitales) sur une ligne dans la colonne de
+    texte ; au-delà, il est réparti sur plusieurs lignes plutôt que de
+    déborder sur la bande photo."""
+    path = os.path.join(FONT_DIR, "Lora-Bold.ttf")
+    max_w = CONTENT_R - MARGIN_L
+    text = titre.upper()
+    size = 84
+    font = ImageFont.truetype(path, size)
+    while size > 44 and draw.textlength(text, font=font) > max_w:
+        size -= 4
+        font = ImageFont.truetype(path, size)
+    lines = [text]
+    if draw.textlength(text, font=font) > max_w:
+        lines = wrap_plain(draw, text, font, max_w)
+        if len(lines) > 2:
+            warn(warnings, "le titre est long et tient sur plus de 2 lignes : vérifie qu'il ne "
+                 "déborde pas sur la photo. Raccourcis-le si besoin.")
+    return font, lines
+
+
+def draw_justified_tags(draw, tags, y, font, fill, x0, x1, min_gap=14):
+    """Répartit les hashtags sur toute la largeur (comme dans le gabarit de
+    référence) si ça tient sur une ligne avec un espacement raisonnable ;
+    sinon renvoie False pour laisser l'appelant retomber sur un rendu
+    centré/multi-lignes classique."""
+    widths = [draw.textlength(t, font=font) for t in tags]
+    total_w = sum(widths)
+    n = len(tags)
+    if n == 0:
+        return True
+    if n == 1:
+        draw.text(((x0 + x1) / 2 - widths[0] / 2, y), tags[0], font=font, fill=fill)
+        return True
+    gap = (x1 - x0 - total_w) / (n - 1)
+    if gap < min_gap:
+        return False
+    x = x0
+    for tag, w in zip(tags, widths):
+        draw.text((x, y), tag, font=font, fill=fill)
+        x += w + gap
+    return True
 
 
 def wrap_plain(draw, text, font, max_width):
@@ -427,48 +534,45 @@ def render(data, image_path, output_path):
 
     paste_photo_band(canvas, image_path, warnings)
 
-    y = 58
+    y = 56
 
-    # --- Branche décorative + icône d'en-tête -----------------------------
-    if data.get("branche_decorative", True):
-        icon_feuille(draw, MARGIN_L + 30, y + 24, 34)
+    # --- Titre : kicker (surtitre) + gros mot-titre + soulignement --------
+    surtitre = data.get("surtitre")
+    if surtitre:
+        draw_tracked(draw, (MARGIN_L, y), surtitre.upper(), fonts["surtitre"], COLOR_TITLE,
+                     tracking=4)
+        y += 38
 
-    icone_entete = data.get("icone_entete")
-    title_x = MARGIN_L
-    if icone_entete:
-        draw_medaillon(draw, MARGIN_L + 90 + 34, y + 90, 34, icone_entete, fonts, warnings)
-        title_x = MARGIN_L + 90 + 34 + 34 + 24
+    titre_font, titre_lines = layout_titre(draw, data["titre"], warnings)
+    line_h = titre_font.size * 1.05
+    for line in titre_lines:
+        draw.text((MARGIN_L, y), line, font=titre_font, fill=COLOR_TITLE)
+        y += line_h
+    last_line = titre_lines[-1]
+    last_w = draw.textlength(last_line, font=titre_font)
+    last_bbox = draw.textbbox((MARGIN_L, y - line_h), last_line, font=titre_font)
+    draw_swash(draw, MARGIN_L, last_bbox[3] + 8, min(last_w, 260), COLOR_SWASH)
+    y += 26
 
-    # --- Titre + sous-titre -------------------------------------------------
-    titre = data["titre"]
-    sous_titre = data.get("sous_titre")
-    ty = y + 60
-    draw.text((title_x, ty), titre, font=fonts["titre"], fill=COLOR_TITLE)
-    if sous_titre:
-        tw = draw.textlength(titre + " ", font=fonts["titre"])
-        draw.text((title_x + tw, ty + 14), f"({sous_titre})", font=fonts["sous_titre"], fill=COLOR_TITLE)
-    y = ty + 90
-
-    # --- Bandeau accroche ----------------------------------------------------
+    # --- Accroche (manuscrite, sans encadré, alignée à gauche) ------------
     accroche = data.get("accroche")
     if accroche:
+        max_w = CONTENT_R - MARGIN_L
         lines = accroche.split("\n") if "\n" in accroche else wrap_plain(
-            draw, accroche, fonts["accroche"], CONTENT_R - MARGIN_L - 60)
-        line_h = 54
-        box_h = 40 + line_h * len(lines)
-        box = [MARGIN_L, y, CONTENT_R, y + box_h]
-        draw.rounded_rectangle(box, radius=28, fill=COLOR_ACCROCHE_BG)
-        ly = y + (box_h - line_h * len(lines)) / 2 + 4
+            draw, accroche, fonts["accroche"], max_w)
+        line_h = 52
+        last_w = 0
         for line in lines:
-            lw = draw.textlength(line, font=fonts["accroche"])
-            draw.text((MARGIN_L + (box[2] - box[0] - lw) / 2, ly), line,
-                      font=fonts["accroche"], fill=COLOR_ACCROCHE_TEXT)
-            ly += line_h
-        y = box[3] + 44
+            draw.text((MARGIN_L, y), line, font=fonts["accroche"], fill=COLOR_ACCROCHE_TEXT)
+            last_w = draw.textlength(line, font=fonts["accroche"])
+            y += line_h
+        last_bbox = draw.textbbox((MARGIN_L, y - line_h), lines[-1], font=fonts["accroche"])
+        draw_swash(draw, MARGIN_L, last_bbox[3] + 6, min(last_w, 220), COLOR_ACCROCHE_TEXT)
+        y += 30
     else:
-        y += 10
+        y += 14
 
-    # --- Sections --------------------------------------------------------
+    # --- Sections (séparées par un filet fin) -----------------------------
     sections = data.get("sections", [])
     if len(sections) > 3:
         warn(warnings, f"{len(sections)} sections fournies : au-delà de 3, le texte "
@@ -478,8 +582,8 @@ def render(data, image_path, output_path):
     text_w = CONTENT_R - text_x
     section_gap = 40
     cta = data.get("cta")
-    cta_texte_lines, cta_valeur_lines, cta_h = layout_cta(draw, cta, fonts, warnings) \
-        if cta else ([], [], 0)
+    cta_h, badge_font, badge_w, cta_total_h = layout_cta(draw, cta, fonts, warnings) \
+        if cta else (0, None, 0, 0)
 
     # Pré-mesure (sans rien dessiner) pour centrer verticalement le bloc
     # sections+CTA dans l'espace restant, plutôt que de le coller en haut et
@@ -491,12 +595,12 @@ def render(data, image_path, output_path):
                                 fonts["corps_gras"], text_w))
         measured_h += max(h, 70) + section_gap
     if cta:
-        measured_h += cta_h
+        measured_h += cta_total_h
     footer_limit = CANVAS_H - FOOTER_H - 30
     available = footer_limit - y
     y += max(0, min(160, (available - measured_h) / 2))
 
-    for section in sections:
+    for idx, section in enumerate(sections):
         icone = section.get("icone", "")
         titre_section = section.get("titre_section", "")
         texte = section.get("texte", "")
@@ -514,49 +618,53 @@ def render(data, image_path, output_path):
         draw_medaillon(draw, MARGIN_L + 44, medaillon_cy, 44, icone, fonts, warnings)
 
         y = by + section_gap
+        if idx < len(sections) - 1:
+            sep_y = y - section_gap / 2
+            draw.line([text_x, sep_y, CONTENT_R, sep_y], fill=COLOR_SEPARATOR, width=1)
 
     if y > footer_limit:
         warn(warnings, "débordement : le texte des sections descend jusque dans le pied de "
              "page. Raccourcis un des textes et relance le script.")
 
-    # --- Encart CTA --------------------------------------------------------
+    # --- Encart CTA (icône + phrase, badge lien à cheval sur le bas) ------
     if cta:
         cta_y0 = y
         box = [MARGIN_L, cta_y0, CONTENT_R, cta_y0 + cta_h]
         draw.rounded_rectangle(box, radius=24, fill=COLOR_CTA_BG, outline=COLOR_CTA_BORDER, width=2)
-        draw_medaillon(draw, MARGIN_L + 55, cta_y0 + cta_h / 2, 34,
-                       cta.get("icone", "telephone"), fonts, warnings)
-        cy_line = cta_y0 + 34
-        for line in cta_texte_lines:
-            draw.text((CTA_TEXT_X, cy_line), line, font=fonts["cta_texte"], fill=COLOR_TEXT)
-            cy_line += 32
-        if cta_valeur_lines:
-            cy_line += 10
-            for vline, vfont in cta_valeur_lines:
-                draw.text((CTA_TEXT_X, cy_line), vline, font=vfont, fill=COLOR_TITLE)
-                cy_line += 34
-        if cta_y0 + cta_h > footer_limit:
-            warn(warnings, "débordement : l'encart CTA empiète sur le pied de page. "
-                 "Raccourcis le texte des sections ou du CTA et relance le script.")
+        draw_icon(draw, cta.get("icone", "telephone"), MARGIN_L + 44, cta_y0 + cta_h / 2, 26,
+                  fonts, warnings)
+        draw_wrapped(draw, (CTA_TEXT_X, cta_y0 + CTA_PAD_TOP), cta.get("texte", ""),
+                    fonts["cta_texte"], fonts["cta_texte_gras"], CTA_TW_MAX, COLOR_TEXT,
+                    CTA_LINE_H)
+        lien = cta.get("lien")
+        if lien and badge_font:
+            badge_y0 = cta_y0 + cta_h - BADGE_H / 2
+            draw.rounded_rectangle([MARGIN_L, badge_y0, MARGIN_L + badge_w, badge_y0 + BADGE_H],
+                                   radius=BADGE_H / 2, fill=COLOR_BADGE_BG)
+            bbox = draw.textbbox((0, 0), lien, font=badge_font)
+            th = bbox[3] - bbox[1]
+            draw.text((MARGIN_L + BADGE_PAD_X, badge_y0 + (BADGE_H - th) / 2 - bbox[1]),
+                      lien, font=badge_font, fill=COLOR_BADGE_TEXT)
+        if cta_y0 + cta_total_h > footer_limit:
+            warn(warnings, "débordement : l'encart CTA (avec son badge lien) empiète sur le "
+                 "pied de page. Raccourcis le texte et relance le script.")
 
-    # --- Pied de page : séparateur + hashtags + cœur ------------------------
-    sep_y = CANVAS_H - FOOTER_H + 18
-    draw.line([MARGIN_L, sep_y, CANVAS_W - MARGIN_L, sep_y], fill=COLOR_FOOTER_LINE, width=1)
-    icon_lotus(draw, CANVAS_W / 2, sep_y, 16)
-
+    # --- Pied de page : hashtags répartis sur la largeur ------------------
     hashtags = data.get("hashtags")
     if hashtags:
-        lines = wrap_plain(draw, hashtags, fonts["hashtag"], CANVAS_W - 2 * MARGIN_L)
-        if len(lines) > 2:
-            warn(warnings, "les hashtags dépassent 2 lignes : les derniers ont été coupés. "
-                 "Raccourcis la liste et relance le script.")
-        hy = sep_y + 26
-        for line in lines[:2]:
-            lw = draw.textlength(line, font=fonts["hashtag"])
-            draw.text(((CANVAS_W - lw) / 2, hy), line, font=fonts["hashtag"], fill=COLOR_HASHTAG)
-            hy += 26
-
-    icon_coeur_petit(draw, CANVAS_W / 2, CANVAS_H - 20, 10)
+        tags = hashtags.split()
+        hy = CANVAS_H - FOOTER_H + 34
+        x0, x1 = MARGIN_L, CANVAS_W - MARGIN_L
+        if not draw_justified_tags(draw, tags, hy, fonts["hashtag"], COLOR_HASHTAG, x0, x1):
+            lines = wrap_plain(draw, hashtags, fonts["hashtag"], x1 - x0)
+            if len(lines) > 2:
+                warn(warnings, "les hashtags dépassent 2 lignes : les derniers ont été "
+                     "coupés. Raccourcis la liste et relance le script.")
+            for line in lines[:2]:
+                lw = draw.textlength(line, font=fonts["hashtag"])
+                draw.text(((CANVAS_W - lw) / 2, hy), line, font=fonts["hashtag"],
+                          fill=COLOR_HASHTAG)
+                hy += 26
 
     canvas.convert("RGB").save(output_path, "JPEG", quality=92)
     return warnings, len(sections)

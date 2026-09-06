@@ -1,6 +1,6 @@
 ---
 name: infographie-massage-metamorphique
-description: Utilise CE skill DÈS QUE l'utilisateur demande de créer, générer ou mettre à jour une infographie pour la page Instagram/Facebook de massage métamorphique de sa sœur, même sans demande explicite du nom du skill. Déclencheurs concrets : « fais-moi l'infographie pour le post de cette semaine », « j'ai le texte et la photo, tu peux assembler le visuel ? », « génère l'infographie sur [sujet] pour Diane », « voici le JSON et la photo, sors-moi le JPEG au format Instagram », « prépare le post du mercredi ». Produit un JPEG 1080x1350 (ratio 4:5) à partir d'un JSON structuré (titre, accroche, sections, CTA, hashtags) et d'une photo de contexte, dans la charte graphique fixe (beige/vert olive, titres serif, bande photo verticale à droite).
+description: Utilise CE skill DÈS QUE l'utilisateur demande de créer, générer ou mettre à jour une infographie pour la page Instagram/Facebook de massage métamorphique de sa sœur, même sans demande explicite du nom du skill. Déclencheurs concrets : « fais-moi l'infographie pour le post de cette semaine », « j'ai le texte et la photo, tu peux assembler le visuel ? », « génère l'infographie sur [sujet] pour Diane », « voici le JSON et la photo, sors-moi le JPEG au format Instagram », « prépare le post du mercredi ». Produit un JPEG 1080x1350 (ratio 4:5) à partir d'un JSON structuré (surtitre, titre, accroche, sections, CTA, hashtags) et d'une photo de contexte, dans la charte graphique fixe (fond crème, titre brun foncé à 2 tailles avec soulignement à main levée, accroche manuscrite terracotta, bande photo verticale à droite).
 allowed-tools: Bash, Read, Write
 ---
 
@@ -10,13 +10,19 @@ allowed-tools: Bash, Read, Write
 
 Assembler un JSON structuré + une photo JPEG/PNG en **une** infographie JPEG
 1080x1350 px prête à poster sur Instagram/Facebook, dans la charte graphique
-fixe de la page : fond crème en dégradé subtil, texte vert olive foncé
-`#4B5A2E` pour les titres (Lora serif), texte courant brun très foncé en
-sans-serif (Instrument Sans), accroche en police manuscrite (Caveat). La mise
+fixe de la page : fond crème en dégradé subtil, titre en deux tailles (petit
+intitulé capitales trackées + gros mot-titre en Lora serif, brun très foncé
+`#282219`, quasi noir) souligné d'un trait « à main levée », accroche en
+police manuscrite (Caveat) couleur terracotta alignée à gauche avec son
+propre soulignement, texte courant en sans-serif (Instrument Sans). La mise
 en page (colonne de texte à gauche, bande photo verticale à droite avec fondu
-sur le bord gauche, icônes en médaillons ligne-art, encart CTA encadré, pied
-de page avec séparateur + hashtags + petit cœur) est calquée sur les gabarits
-de référence validés par l'utilisatrice.
+sur le bord gauche, icônes en médaillons ligne-art, sections séparées par un
+filet fin, encart CTA encadré avec un badge lien vert olive à cheval sur son
+bord bas, hashtags répartis sur toute la largeur en pied de page) est calquée
+sur le gabarit de référence validé par l'utilisatrice (« Le stress du
+quotidien ») — ce gabarit remplace l'ancienne version (titre vert olive,
+accroche encadrée, CTA à une seule valeur) : ne reviens pas à l'ancien style
+sauf si l'utilisatrice le demande explicitement.
 
 Si la demande de l'utilisateur dépasse ça (ex. « génère aussi le texte du
 post », « publie-le directement sur Instagram », « crée-moi 5 variantes de
@@ -51,15 +57,19 @@ Ne contourne jamais cette étape et ne tente pas d'improviser un rendu sans Pill
 
 Le skill a besoin de :
 
-1. Un **JSON structuré** avec au minimum `titre`, `sections` (liste de
-   `{icone, titre_section, texte}`, 1 à 3 sections). `accroche`, `sous_titre`,
-   `icone_entete`, `cta` (`{icone, texte, valeur}`) et `hashtags` sont
-   optionnels mais fortement recommandés — c'est ce qui fait ressembler le
-   rendu aux exemples validés. Dans `accroche`, `texte` (des sections comme
+1. Un **JSON structuré** avec au minimum `titre` (le gros mot-titre — mis en
+   capitales automatiquement par le script, ne le tape pas toi-même en
+   capitales) et `sections` (liste de `{icone, titre_section, texte}`, 1 à 3
+   sections). `surtitre` (le petit intitulé au-dessus du titre, ex. « Le
+   stress du »), `accroche`, `cta` (`{icone, texte, lien}`) et `hashtags`
+   sont optionnels mais fortement recommandés — c'est ce qui fait ressembler
+   le rendu au gabarit validé. Dans `accroche`, `texte` (des sections comme
    du CTA), un mot ou groupe de mots peut être mis en gras avec `**...**`
    (ex. `"une **véritable reconnexion**"`) — c'est la seule mise en forme
    reconnue, elle est appliquée à la lettre, jamais interprétée ou ajoutée de
-   ta propre initiative.
+   ta propre initiative. Le numéro de téléphone, lui, va **dans la phrase**
+   de `cta.texte` (pas en gras, tel quel dans l'exemple validé) — seul un
+   lien/URL va dans `cta.lien`, affiché à part dans un badge vert olive.
 2. Une **photo de contexte** (JPEG ou PNG) qui habille la bande verticale à
    droite de l'infographie.
 
@@ -68,12 +78,13 @@ ne fabrique jamais de texte ni ne choisis une photo à sa place.
 
 ### Icônes disponibles
 
-`cerveau`, `papillon`, `feuille` (aussi utilisée pour la petite branche
-décorative du coin supérieur gauche), `arbre`, `noeud`, `croix` (un « X »,
-pour les listes « ce que ce n'est pas »), `colonne` (colonne vertébrale),
-`silhouette` (silhouette + petit cœur, pour tout ce qui touche au corps/à
-l'écoute de soi), `lotus`, `telephone`, `enveloppe`, `lien` (icône de
-maillon, pour un renvoi vers un site), `question` (un simple « ? »), `coeur`.
+`cerveau`, `papillon`, `feuille`, `arbre`, `noeud`, `croix` (un « X », pour
+les listes « ce que ce n'est pas »), `colonne` (colonne vertébrale),
+`colonne_ondes` (colonne vertébrale qui vibre, pour le lâcher-prise/la
+détente), `silhouette` (silhouette + petit cœur, pour tout ce qui touche au
+corps/à l'écoute de soi), `horloge_noeud` (agenda chargé/stress du
+quotidien), `lotus`, `telephone`, `enveloppe`, `lien` (icône de maillon,
+pour un renvoi vers un site), `question` (un simple « ? »), `coeur`.
 
 Une icône inconnue ne fait pas planter le script (un simple cercle est
 dessiné à la place), mais signale-le à l'utilisateur : ça vaut le coup de lui
@@ -121,54 +132,54 @@ photo introuvable...). Corrige l'entrée, ne modifie jamais le script pour
 
 ```json
 {
-  "titre": "La clarté",
-  "sous_titre": "La Tête",
-  "icone_entete": "cerveau",
-  "accroche": "Mettre le mental sur pause\npour laisser le papillon s'envoler…",
+  "surtitre": "Le stress du",
+  "titre": "Quotidien",
+  "accroche": "Une pause dans\nle rythme du quotidien",
   "sections": [
     {
-      "icone": "cerveau",
+      "icone": "horloge_noeud",
       "titre_section": "",
-      "texte": "Pour clore une séance de Massage Métamorphique, le soin se concentre sur la **tête**. Cette zone est en lien direct avec notre sphère de **pensée et de réflexion**."
+      "texte": "Agenda chargé, responsabilités, sollicitations permanentes... Notre attention est constamment tournée vers l'extérieur."
     },
     {
-      "icone": "papillon",
+      "icone": "colonne_ondes",
       "titre_section": "",
-      "texte": "C'est ici que se joue notre capacité à accueillir le **changement** et à intégrer les transformations de la vie avec plus de **sérénité**."
+      "texte": "Le **Massage Métamorphique** offre un moment rare : celui de revenir à soi. Pendant une heure, aucune performance n'est attendue. Rien à réussir. Rien à prouver. Simplement l'occasion de se déposer et de retrouver un peu d'espace intérieur."
     }
   ],
   "cta": {
     "icone": "telephone",
-    "texte": "Tenté(e) par le Massage Métamorphique ? Prenez rendez-vous au",
-    "valeur": "0475 69 00 84"
+    "texte": "Pour planifier votre moment de déconnexion, vous pouvez me contacter au 0477 69 00 84",
+    "lien": "https://massage-metamorphique.pages.dev/"
   },
-  "hashtags": "#clartémentale #massage #bienetre #metamorphose #serenite"
+  "hashtags": "#stress #bienetre #pause #equilibredevie #relaxation"
 }
 ```
 
-`sous_titre` est affiché entre parenthèses juste après `titre`, sur la même
-ligne (ex. « La clarté (La Tête) »). `titre_section` peut être laissé vide
-(`""`) quand le texte de la section n'a pas besoin de son propre sous-titre
-en gras — c'est le cas dans l'exemple ci-dessus.
+`titre_section` peut être laissé vide (`""`) quand le texte de la section
+n'a pas besoin de son propre sous-titre en gras — c'est le cas dans
+l'exemple ci-dessus, où l'emphase se fait uniquement via `**...**` en ligne
+(« **Massage Métamorphique** »). `cta.lien` est optionnel : sans lien, seul
+l'encart texte s'affiche, sans badge.
 
 ## Étape 3 — Préférences réutilisables (fiche mémoire)
 
 Le style graphique est fixe (défini dans le script) : tu ne poses **jamais**
 de question dessus. `memoire.json`, à la racine du skill, sert uniquement à
 retenir les valeurs qui reviennent d'une infographie à l'autre :
-`cta_texte_defaut`, `cta_url_defaut`, `cta_icone_defaut`, `hashtags_frequents`.
+`cta_texte_defaut`, `cta_lien_defaut`, `cta_icone_defaut`, `hashtags_frequents`.
 
 Règles :
 
 - **Produis toujours un premier résultat avant de poser une question.** Si
   le JSON fourni n'a pas de `cta`/`hashtags` complet mais que `memoire.json`
   en contient un, utilise-le automatiquement (sans demander) pour compléter
-  les champs manquants. Si la mémoire est vide aussi, demande le texte et la
-  valeur (numéro ou URL) du CTA — ce sont des champs obligatoires dès que
-  `cta` est fourni, contrairement à `hashtags` qui est optionnel. Une fois le
-  résultat montré, pose **une seule question** : « Veux-tu que je retienne ce
-  texte/cette valeur de CTA par défaut pour les prochaines infographies ? »
-  Jamais plusieurs questions à la fois, jamais de formulaire.
+  les champs manquants. Si la mémoire est vide aussi, demande le texte (et le
+  lien s'il y en a un) du CTA — `cta.texte` est obligatoire dès que `cta` est
+  fourni, contrairement à `cta.lien` et `hashtags` qui sont optionnels. Une
+  fois le résultat montré, pose **une seule question** : « Veux-tu que je
+  retienne ce texte/ce lien de CTA par défaut pour les prochaines
+  infographies ? » Jamais plusieurs questions à la fois, jamais de formulaire.
 - Si l'utilisateur colle un exemple de JSON déjà complet, apprends-en
   directement les valeurs par défaut sans les lui redemander sous forme de
   question abstraite — propose simplement : « Je retiens ce CTA pour la
