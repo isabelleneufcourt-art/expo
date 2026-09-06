@@ -39,6 +39,9 @@ PHOTO_X0 = 700           # début de la bande photo
 FEATHER_W = 170          # largeur de la zone de fondu photo -> fond
 FOOTER_H = 118           # bande basse (hashtags + séparateur), pleine largeur
 
+CTA_TEXT_X = MARGIN_L + 110
+CTA_TW_MAX = CONTENT_R - 24 - CTA_TEXT_X
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 FONT_DIR = os.path.join(os.path.dirname(SCRIPT_DIR), "assets", "fonts")
 
@@ -69,6 +72,7 @@ def load_fonts():
         "corps_gras": f("InstrumentSans-Bold.ttf", 27),
         "cta_texte": f("InstrumentSans-Regular.ttf", 26),
         "cta_valeur": f("InstrumentSans-Bold.ttf", 32),
+        "cta_valeur_small": f("InstrumentSans-Bold.ttf", 24),
         "hashtag": f("InstrumentSans-Regular.ttf", 20),
     }
     # Police manuscrite variable : on force un poids plus soutenu (~650)
@@ -333,6 +337,31 @@ def draw_wrapped(draw, xy, text, font_regular, font_bold, max_width, fill, line_
     return y  # y final (bas du bloc)
 
 
+def layout_cta(draw, cta, fonts, warnings):
+    """Calcule les lignes de texte et de valeur (numéro/URL) de l'encart CTA,
+    en choisissant automatiquement une police plus petite pour une ligne de
+    valeur trop large (typiquement une URL) plutôt que de la faire déborder
+    du cadre. Retourne (lignes_texte, [(ligne_valeur, police), ...], hauteur)."""
+    texte_lines = wrap_plain(draw, cta.get("texte", ""), fonts["cta_texte"], CTA_TW_MAX)
+    valeur_lines = []
+    for raw_line in cta.get("valeur", "").split("\n"):
+        raw_line = raw_line.strip()
+        if not raw_line:
+            continue
+        font = fonts["cta_valeur"]
+        if draw.textlength(raw_line, font=font) > CTA_TW_MAX:
+            font = fonts["cta_valeur_small"]
+            if draw.textlength(raw_line, font=font) > CTA_TW_MAX:
+                warn(warnings, f"la valeur du CTA '{raw_line}' est trop longue pour l'encart "
+                     "même en petite police : elle risque de déborder. Raccourcis-la.")
+        valeur_lines.append((raw_line, font))
+    h = 34 + 32 * len(texte_lines)
+    if valeur_lines:
+        h += 10 + 34 * len(valeur_lines)
+    h += 26
+    return texte_lines, valeur_lines, max(h, 100)
+
+
 def wrap_plain(draw, text, font, max_width):
     words = text.split(" ")
     lines, current = [], []
@@ -449,7 +478,8 @@ def render(data, image_path, output_path):
     text_w = CONTENT_R - text_x
     section_gap = 40
     cta = data.get("cta")
-    cta_h = 150
+    cta_texte_lines, cta_valeur_lines, cta_h = layout_cta(draw, cta, fonts, warnings) \
+        if cta else ([], [], 0)
 
     # Pré-mesure (sans rien dessiner) pour centrer verticalement le bloc
     # sections+CTA dans l'espace restant, plutôt que de le coller en haut et
@@ -496,14 +526,15 @@ def render(data, image_path, output_path):
         draw.rounded_rectangle(box, radius=24, fill=COLOR_CTA_BG, outline=COLOR_CTA_BORDER, width=2)
         draw_medaillon(draw, MARGIN_L + 55, cta_y0 + cta_h / 2, 34,
                        cta.get("icone", "telephone"), fonts, warnings)
-        tx = MARGIN_L + 110
-        tw_max = CONTENT_R - 24 - tx
         cy_line = cta_y0 + 34
-        for line in wrap_plain(draw, cta["texte"], fonts["cta_texte"], tw_max):
-            draw.text((tx, cy_line), line, font=fonts["cta_texte"], fill=COLOR_TEXT)
+        for line in cta_texte_lines:
+            draw.text((CTA_TEXT_X, cy_line), line, font=fonts["cta_texte"], fill=COLOR_TEXT)
             cy_line += 32
-        if cta.get("valeur"):
-            draw.text((tx, cy_line + 6), cta["valeur"], font=fonts["cta_valeur"], fill=COLOR_TITLE)
+        if cta_valeur_lines:
+            cy_line += 10
+            for vline, vfont in cta_valeur_lines:
+                draw.text((CTA_TEXT_X, cy_line), vline, font=vfont, fill=COLOR_TITLE)
+                cy_line += 34
         if cta_y0 + cta_h > footer_limit:
             warn(warnings, "débordement : l'encart CTA empiète sur le pied de page. "
                  "Raccourcis le texte des sections ou du CTA et relance le script.")
