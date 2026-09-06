@@ -544,14 +544,14 @@ def render(data, image_path, output_path):
         y += 38
 
     titre_font, titre_lines = layout_titre(draw, data["titre"], warnings)
-    line_h = titre_font.size * 1.05
+    line_h = titre_font.size * 1.18
     for line in titre_lines:
         draw.text((MARGIN_L, y), line, font=titre_font, fill=COLOR_TITLE)
         y += line_h
     last_line = titre_lines[-1]
     last_w = draw.textlength(last_line, font=titre_font)
     last_bbox = draw.textbbox((MARGIN_L, y - line_h), last_line, font=titre_font)
-    draw_swash(draw, MARGIN_L, last_bbox[3] + 8, min(last_w, 260), COLOR_SWASH)
+    draw_swash(draw, MARGIN_L, last_bbox[3] + 14, min(last_w, 260), COLOR_SWASH)
     y += 26
 
     # --- Accroche (manuscrite, sans encadré, alignée à gauche) ------------
@@ -567,7 +567,7 @@ def render(data, image_path, output_path):
             last_w = draw.textlength(line, font=fonts["accroche"])
             y += line_h
         last_bbox = draw.textbbox((MARGIN_L, y - line_h), lines[-1], font=fonts["accroche"])
-        draw_swash(draw, MARGIN_L, last_bbox[3] + 6, min(last_w, 220), COLOR_ACCROCHE_TEXT)
+        draw_swash(draw, MARGIN_L, last_bbox[3] + 10, min(last_w, 220), COLOR_ACCROCHE_TEXT)
         y += 30
     else:
         y += 14
